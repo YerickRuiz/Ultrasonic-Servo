@@ -1,9 +1,18 @@
-void setup() {
-  // put your setup code here, to run once:
+#include <Servo.h>
+int pos = 0;
+int servo_pin = 9;
 
+Servo myservo;
+
+
+void setup() {
+  myservo.attach(9);
+  myservo.write(pos);
+  delay(100);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
 
+  myservo.write(pos);
+  delay(50);
 }
