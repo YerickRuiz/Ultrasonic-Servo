@@ -1,3 +1,10 @@
+#include <Servo.h>
+int pos = 0;
+int servo_pin = 9;
+
+Servo myservo;
+
+
 const int us_trigger = 2;
 const int us_echo = 3;
 
@@ -23,6 +30,9 @@ void setup() {
 
   Serial.begin(9600);
   digitalWrite(us_trigger, LOW);
+  myservo.attach(9);
+  myservo.write(pos);
+  delay(100);
 }
 
 void loop() {
@@ -33,4 +43,6 @@ void loop() {
   Serial.println("cm");
 
   //Send distance to servo
+  myservo.write(pos);
+  delay(50);
 }
