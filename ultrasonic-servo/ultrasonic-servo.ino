@@ -1,19 +1,18 @@
 #include <Servo.h>
-int pos = 0;
-int servo_pin = 9;
-
-Servo myservo;
-
 
 const int us_trigger = 2;
 const int us_echo = 3;
+const int servo_pin = 9;
+const int average_num = 5;
+
+Servo myservo;
 
 int us_get_distance() {
   int distance;
   long duration;
 
   digitalWrite(us_trigger, HIGH);
-  delay(100);
+  delayMicroseconds(10);
   digitalWrite(us_trigger, LOW);
 
   duration = pulseIn(us_echo, HIGH);
@@ -22,7 +21,28 @@ int us_get_distance() {
   return distance;
 }
 
+int filter_distance() {
+  int distance = 0;
+  int average = 0;
+  int position = 0;
+  
+  for (int i = 0; i < average_num; i++) {
+    average += us_get_distance();
+    delay(20);
+  }
+  
+  distance = average / average_num;
 
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println("cm");
+
+  position = distance * 4;
+  if (position >= 180) {
+    position = 180;
+  }
+  return position;
+}
 
 void setup() {
   pinMode(us_trigger, OUTPUT);
@@ -30,19 +50,12 @@ void setup() {
 
   Serial.begin(9600);
   digitalWrite(us_trigger, LOW);
-  myservo.attach(9);
-  myservo.write(pos);
+  myservo.attach(servo_pin);
   delay(100);
 }
 
 void loop() {
-  int distance = us_get_distance();
-
-  Serial.print("Distance: ");
-  Serial.print(distance);
-  Serial.println("cm");
 
   //Send distance to servo
-  myservo.write(pos);
-  delay(50);
+  myservo.write(filter_distance());
 }
